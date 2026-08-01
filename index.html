@@ -3,83 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Amparos | LegalOps</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 40px; display: flex; justify-content: center; }
-        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 500px; width: 100%; }
-        h2 { color: #1a2a3a; margin-bottom: 20px; }
-        label { font-weight: bold; font-size: 14px; color: #333; display: block; margin-top: 15px; }
-        input, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { margin-top: 25px; width: 100%; padding: 12px; background-color: #0066cc; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #004b99; }
-        #status { margin-top: 20px; font-weight: bold; text-align: center; }
-    </style>
+    <title>Radicación e Ingreso de Demandas | PJF</title>
+    <!-- Tailwind CSS desde CDN para diseño moderno y responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-slate-100 font-sans min-h-screen text-slate-800">
 
-<div class="card">
-    <h2>⚖️ Generador de Amparo Indirecto</h2>
-    <form id="amparoForm">
-        <label for="quejoso">Nombre del Quejoso:</label>
-        <input type="text" id="quejoso" placeholder="ej. Juan Pérez Pérez" required>
+    <div class="max-w-5xl mx-auto py-10 px-4">
+        
+        <!-- Encabezado -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-900">Formulario de Radicación de Demandas</h1>
+            <p class="text-slate-600 mt-2">Plataforma interactiva para preparación y envío de expedientes</p>
+        </header>
 
-        <label for="juzgado">Juzgado de Distrito:</label>
-        <input type="text" id="juzgado" placeholder="ej. Juzgado Primero de Distrito en Materia Administrativa" required>
+        <!-- Barra de Progreso del Wizard -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center text-sm font-semibold text-slate-500 mb-2">
+                <span id="step-label-1" class="text-indigo-600">1. Quejoso</span>
+                <span id="step-label-2">2. Autoridades</span>
+                <span id="step-label-3">3. Antecedentes</span>
+                <span id="step-label-4">4. Pruebas</span>
+                <span id="step-label-5">5. Envío</span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 20%;"></div>
+            </div>
+        </div>
 
-        <label for="autoridad">Autoridad Responsable:</label>
-        <input type="text" id="autoridad" placeholder="ej. Director General de..." required>
+        <!-- Contenedor del Formulario -->
+        <div class="bg-white p-8 rounded-xl shadow-md border border-slate-200">
+            <form id="demandForm" onsubmit="return false;">
 
-        <label for="acto_reclamado">Acto Reclamado:</label>
-        <textarea id="acto_reclamado" rows="3" placeholder="ej. La omisión de dar respuesta al escrito..." required></textarea>
+                <!-- ================= PASO 1: DATOS DEL QUEJOSO ================= -->
+                <section id="step-1" class="wizard-step space-y-6">
+                    <h2 class="text-xl font-bold text-slate-900 border-b pb-2">Sección 1: Datos del Quejoso y Representación</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Tipo de Persona *</label>
+                            <select id="tipoPersona" required class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="Física">Persona Física</option>
+                                <option value="Moral">Persona Moral</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Nombre Completo / Razón Social *</label>
+                            <input type="text" id="nombreQuejoso" required class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ej. Juan Pérez López">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Promoción *</label>
+                            <select id="tipoPromocion" required class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="Propio Derecho">Por propio derecho</option>
+                                <option value="Representacion Menores">En representación de menores</option>
+                                <option value="Apoderado Legal">Apoderado Legal</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Usuario Portal PJF *</label>
+                            <input type="text" id="usuarioPJF" required class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Nombre de usuario del portal">
+                        </div>
+                    </div>
 
-        <label for="telefono">Teléfono / WhatsApp de contacto:</label>
-        <input type="tel" id="telefono" placeholder="ej. 5512345678" required>
+                    <div class="flex items-center space-x-3 pt-2">
+                        <input type="checkbox" id="notificacionesElec" class="h-4 w-4 text-indigo-600 rounded border-slate-300">
+                        <label for="notificacionesElec" class="text-sm text-slate-700">Autorizo recibir notificaciones electrónicas y acceso al expediente digital</label>
+                    </div>
+                </section>
 
-        <button type="button" onclick="enviarAmparo()">Generar Amparo y Enviar Alerta</button>
-    </form>
+                <!-- ================= PASO 2: AUTORIDADES Y ORGANO ================= -->
+                <section id="step-2" class="wizard-step hidden space-y-6">
+                    <h2 class="text-xl font-bold text-slate-900 border-b pb-2">Sección 2: Circuito, Juzgados y Autoridades</h2>
 
-    <div id="status"></div>
-</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Circuito Judicial *</label>
+                            <select id="selectCircuito" required onchange="cargarMaterias()" class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900">
+                                <option value="">Seleccione un Circuito...</option>
+                                <option value="1">Primer Circuito (Ciudad de México)</option>
+                                <option value="14">Decimocuarto Circuito (Yucatán)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Materia *</label>
+                            <select id="selectMateria" required onchange="cargarJuzgados()" disabled class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900">
+                                <option value="">Seleccione Materia...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Juzgado / Tribunal *</label>
+                            <select id="selectJuzgado" required disabled class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900">
+                                <option value="">Seleccione Juzgado...</option>
+                            </select>
+                        </div>
+                    </div>
 
-<script>
-    async function enviarAmparo() {
-        const statusDiv = document.getElementById('status');
-        statusDiv.style.color = '#333';
-        statusDiv.innerText = "Procesando en la nube de AWS...";
+                    <div class="space-y-4 pt-4 border-t border-slate-100">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Autoridad Ordenadora *</label>
+                            <input type="text" id="autoridadOrdenadora" required class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900" placeholder="Ej. Juez del Tribunal de Trabajo">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Autoridad Ejecutora</label>
+                            <input type="text" id="autoridadEjecutora" class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900" placeholder="Ej. Secretario Instructor">
+                        </div>
+                    </div>
+                </section>
 
-        // Sustituye esta URL por la URL pública de tu API Gateway
-        const API_URL = 'https://TU_API_ID.execute-api.us-east-1.amazonaws.com/EnviarNotificacionAlerta';
+                <!-- ================= PASO 3: ANTECEDENTES Y ACTOS ================= -->
+                <section id="step-3" class="wizard-step hidden space-y-6">
+                    <h2 class="text-xl font-bold text-slate-900 border-b pb-2">Sección 3: Actos Reclamados y Antecedentes</h2>
 
-        const datos = {
-            quejoso: document.getElementById('quejoso').value,
-            juzgado: document.getElementById('juzgado').value,
-            autoridad: document.getElementById('autoridad').value,
-            acto_reclamado: document.getElementById('acto_reclamado').value,
-            telefono: document.getElementById('telefono').value
-        };
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Número de Expediente de Origen *</label>
+                        <input type="text" id="expedienteOrigen" required class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900" placeholder="Ej. 1234/2025">
+                    </div>
 
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datos)
-            });
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Descripción del Acto Reclamado *</label>
+                        <textarea id="actoReclamado" rows="4" required class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900" placeholder="Describa la omisión, parálisis o resolución imputada..."></textarea>
+                    </div>
+                </section>
 
-            if (response.ok) {
-                statusDiv.style.color = 'green';
-                statusDiv.innerText = "✅ ¡Escrito de Amparo generado y enviado por correo!";
-                document.getElementById('amparoForm').reset();
-            } else {
-                statusDiv.style.color = 'red';
-                statusDiv.innerText = "❌ Error al procesar en la nube.";
+                <!-- ================= PASO 4: PRUEBAS Y ANEXOS ================= -->
+                <section id="step-4" class="wizard-step hidden space-y-6">
+                    <h2 class="text-xl font-bold text-slate-900 border-b pb-2">Sección 4: Conceptos y Anexos</h2>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Conceptos de Violación *</label>
+                        <textarea id="conceptosViolacion" rows="4" required class="mt-1 block w-full rounded-md border-slate-300 border p-2 text-slate-900" placeholder="Argumentación jurídica sobre los artículos constitucionales violados..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Cargar Pruebas Documentales (PDF) *</label>
+                        <input type="file" id="archivosPruebas" multiple accept=".pdf" class="mt-2 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    </div>
+                </section>
+
+                <!-- ================= PASO 5: RESUMEN Y ENVÍO ================= -->
+                <section id="step-5" class="wizard-step hidden space-y-6">
+                    <h2 class="text-xl font-bold text-slate-900 border-b pb-2">Sección 5: Confirmación y Envío</h2>
+                    <p class="text-slate-600">Por favor, revise la información antes de procesar el envío.</p>
+
+                    <div id="resumenPayload" class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs font-mono text-slate-700 overflow-x-auto max-h-60">
+                        <!-- Se llena dinámicamente con JavaScript -->
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" id="confirmacionLegal" required class="h-4 w-4 text-indigo-600 rounded border-slate-300">
+                        <label for="confirmacionLegal" class="text-sm text-slate-700">Bajo protesta de decir verdad, manifiesto que los datos proporcionados son ciertos.</label>
+                    </div>
+                </section>
+
+                <!-- Navegación de Botones del Wizard -->
+                <div class="mt-8 pt-4 border-t border-slate-200 flex justify-between items-center">
+                    <button type="button" id="btnAnterior" onclick="cambiarPaso(-1)" class="hidden px-5 py-2 rounded-md bg-slate-200 text-slate-700 font-medium hover:bg-slate-300">
+                        Anterior
+                    </button>
+                    
+                    <div class="ml-auto flex gap-3">
+                        <button type="button" onclick="guardarBorrador()" class="px-5 py-2 rounded-md bg-slate-100 text-slate-600 font-medium hover:bg-slate-200 border border-slate-300">
+                            Guardar Borrador
+                        </button>
+                        <button type="button" id="btnSiguiente" onclick="cambiarPaso(1)" class="px-5 py-2 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-700">
+                            Siguiente
+                        </button>
+                        <button type="submit" id="btnEnviar" onclick="enviarFormularioAWS()" class="hidden px-5 py-2 rounded-md bg-emerald-600 text-white font-medium hover:bg-emerald-700">
+                            Radicar Demanda
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Inline de Funcionalidad para GitHub Pages -->
+    <script>
+        // Datos JSON jerárquicos de Circuitos y Juzgados
+        const datasetCircuitos = [
+            {
+                circuito_id: "1",
+                materias: [
+                    {
+                        nombre: "Trabajo",
+                        juzgados: ["Juzgado de Distrito en Materia de Trabajo en la CdMx", "Tribunal Laboral de Asuntos Individuales"]
+                    },
+                    {
+                        nombre: "Civil / Familiar",
+                        juzgados: ["Juzgado de Distrito en Materia Civil en la CdMx", "Unidad de Gestión Judicial en Materia Familiar"]
+                    }
+                ]
+            },
+            {
+                circuito_id: "14",
+                materias: [
+                    {
+                        nombre: "Penal",
+                        juzgados: ["Juzgado de Distrito en el Estado de Yucatán en Turno (Mérida)"]
+                    },
+                    {
+                        nombre: "Mixto / General",
+                        juzgados: ["Juzgado Primero de Distrito en el Estado de Yucatán", "Juzgado Segundo de Distrito en el Estado de Yucatán"]
+                    }
+                ]
             }
-        } catch (error) {
-            statusDiv.style.color = 'red';
-            statusDiv.innerText = "❌ Error de conexión con la API de AWS.";
-            console.error(error);
-        }
-    }
-</script>
+        ];
 
+        let pasoActual = 1;
+        const totalPasos = 5;
+
+        function cambiarPaso(direccion) {
+            // Ocultar paso actual
+            document.getElementById(`step-${pasoActual}`).classList.add('hidden');
+            
+            pasoActual += direccion;
+
+            // Mostrar nuevo paso
+            document.getElementById(`step-${pasoActual}`).classList.remove('hidden');
+
+            // Actualizar botones y progreso
+            actualizarInterfaz();
+        }
+
+        function actualizarInterfaz() {
+            // Actualizar barra de progreso
+            const porcentaje = (pasoActual / totalPasos) * 100;
+            document.getElementById('progress-bar').style.width = `${porcentaje}%`;
+
+            // Control de visibilidad de botones
+            document.getElementById('btnAnterior').classList.toggle('hidden', pasoActual === 1);
+            document.getElementById('btnSiguiente').classList.toggle('hidden', pasoActual === totalPasos);
+            document.getElementById('btnEnviar').classList.toggle('hidden', pasoActual !== totalPasos);
+
+            // Si llegamos al paso 5, generar la vista previa
+            if (pasoActual === 5) {
+                generarResumenJSON();
+            }
+        }
+
+        function cargarMaterias() {
+            const circuitoId = document.getElementById('selectCircuito').value;
+            const selectMateria = document.getElementById('selectMateria');
+            const selectJuzgado = document.getElementById('selectJuzgado');
+
+            selectMateria.innerHTML = '<option value="">Seleccione Materia...</option>';
+            selectJuzgado.innerHTML = '<option value="">Seleccione Juzgado...</option>';
+            selectJuzgado.disabled = true;
+
+            if (!circuitoId) {
+                selectMateria.disabled = true;
+                return;
+            }
+
+            const circuitoData = datasetCircuitos.find(c => c.circuito_id === circuitoId);
+            if (circuitoData) {
+                circuitoData.materias.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.nombre;
+                    opt.textContent = m.nombre;
+                    selectMateria.appendChild(opt);
+                });
+                selectMateria.disabled = false;
+            }
+        }
+
+        function cargarJuzgados() {
+            const circuitoId = document.getElementById('selectCircuito').value;
+            const materiaNombre = document.getElementById('selectMateria').value;
+            const selectJuzgado = document.getElementById('selectJuzgado');
+
+            selectJuzgado.innerHTML = '<option value="">Seleccione Juzgado...</option>';
+
+            if (!materiaNombre) {
+                selectJuzgado.disabled = true;
+                return;
+            }
+
+            const circuitoData = datasetCircuitos.find(c => c.circuito_id === circuitoId);
+            const materiaData = circuitoData?.materias.find(m => m.nombre === materiaNombre);
+
+            if (materiaData) {
+                materiaData.juzgados.forEach(j => {
+                    const opt = document.createElement('option');
+                    opt.value = j;
+                    opt.textContent = j;
+                    selectJuzgado.appendChild(opt);
+                });
+                selectJuzgado.disabled = false;
+            }
+        }
+
+        function generarResumenJSON() {
+            const data = {
+                quejoso: {
+                    nombre: document.getElementById('nombreQuejoso').value,
+                    tipoPersona: document.getElementById('tipoPersona').value,
+                    promocion: document.getElementById('tipoPromocion').value,
+                    usuarioPJF: document.getElementById('usuarioPJF').value,
+                    notificacionesElectronicas: document.getElementById('notificacionesElec').checked
+                },
+                radicacion: {
+                    circuito: document.getElementById('selectCircuito').value,
+                    materia: document.getElementById('selectMateria').value,
+                    juzgado: document.getElementById('selectJuzgado').value,
+                    autoridadOrdenadora: document.getElementById('autoridadOrdenadora').value
+                },
+                demanda: {
+                    expedienteOrigen: document.getElementById('expedienteOrigen').value,
+                    actoReclamado: document.getElementById('actoReclamado').value,
+                    conceptosViolacion: document.getElementById('conceptosViolacion').value
+                }
+            };
+
+            document.getElementById('resumenPayload').textContent = JSON.stringify(data, null, 2);
+        }
+
+        function guardarBorrador() {
+            alert("Borrador guardado localmente en el navegador.");
+        }
+
+        function enviarFormularioAWS() {
+            alert("¡Demanda lista para ser enviada a AWS API Gateway / S3!");
+        }
+    </script>
 </body>
 </html>
