@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Amparos | LegalOps</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 40px; display: flex; justify-content: center; }
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 500px; width: 100%; }
+        h2 { color: #1a2a3a; margin-bottom: 20px; }
+        label { font-weight: bold; font-size: 14px; color: #333; display: block; margin-top: 15px; }
+        input, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { margin-top: 25px; width: 100%; padding: 12px; background-color: #0066cc; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #004b99; }
+        #status { margin-top: 20px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>⚖️ Generador de Amparo Indirecto</h2>
+    <form id="amparoForm">
+        <label for="quejoso">Nombre del Quejoso:</label>
+        <input type="text" id="quejoso" placeholder="ej. Juan Pérez Pérez" required>
+
+        <label for="juzgado">Juzgado de Distrito:</label>
+        <input type="text" id="juzgado" placeholder="ej. Juzgado Primero de Distrito en Materia Administrativa" required>
+
+        <label for="autoridad">Autoridad Responsable:</label>
+        <input type="text" id="autoridad" placeholder="ej. Director General de..." required>
+
+        <label for="acto_reclamado">Acto Reclamado:</label>
+        <textarea id="acto_reclamado" rows="3" placeholder="ej. La omisión de dar respuesta al escrito..." required></textarea>
+
+        <label for="telefono">Teléfono / WhatsApp de contacto:</label>
+        <input type="tel" id="telefono" placeholder="ej. 5512345678" required>
+
+        <button type="button" onclick="enviarAmparo()">Generar Amparo y Enviar Alerta</button>
+    </form>
+
+    <div id="status"></div>
+</div>
+
+<script>
+    async function enviarAmparo() {
+        const statusDiv = document.getElementById('status');
+        statusDiv.style.color = '#333';
+        statusDiv.innerText = "Procesando en la nube de AWS...";
+
+        // Sustituye esta URL por la URL pública de tu API Gateway
+        const API_URL = 'https://TU_API_ID.execute-api.us-east-1.amazonaws.com/EnviarNotificacionAlerta';
+
+        const datos = {
+            quejoso: document.getElementById('quejoso').value,
+            juzgado: document.getElementById('juzgado').value,
+            autoridad: document.getElementById('autoridad').value,
+            acto_reclamado: document.getElementById('acto_reclamado').value,
+            telefono: document.getElementById('telefono').value
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+
+            if (response.ok) {
+                statusDiv.style.color = 'green';
+                statusDiv.innerText = "✅ ¡Escrito de Amparo generado y enviado por correo!";
+                document.getElementById('amparoForm').reset();
+            } else {
+                statusDiv.style.color = 'red';
+                statusDiv.innerText = "❌ Error al procesar en la nube.";
+            }
+        } catch (error) {
+            statusDiv.style.color = 'red';
+            statusDiv.innerText = "❌ Error de conexión con la API de AWS.";
+            console.error(error);
+        }
+    }
+</script>
+
+</body>
+</html>
